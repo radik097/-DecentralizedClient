@@ -138,7 +138,7 @@ class DecentralizedClient:
                     log.info("Сообщение отправлено.")
                 
                 response = await websocket.recv()
-                log.info(f"Получено сообщение: {response}")
+                log.info(f"Получено сообщение: {response}") 
                 if self.page:
                     self.message_list.controls.append(ft.Text(f"Партнер: {response}"))
                     self.page.update()
