@@ -119,10 +119,22 @@ class DecentralizedClient:
                 self.page.update()
                 input_box.value = ""
 
+            async def send_file(e):
+                file_picker = ft.FilePicker(on_result=lambda e: send_file_result(e.data))
+                self.page.add(file_picker)
+                self.page.update()
+
+            async def send_file_result(file_path):
+                await websocket.send(f"[File]({file_path})")
+                log.info("Файл отправлен.")
+                self.message_list.controls.append(ft.Text(f"Вы: Файл отправлен"))
+                self.page.update()
+
             input_box = ft.TextField(hint_text="Введите сообщение", expand=True)
             send_button = ft.ElevatedButton("Отправить", on_click=send_message)
+            send_file_button = ft.ElevatedButton("Отправить файл", on_click=send_file)
 
-            self.page.add(ft.Row([input_box, send_button]))
+            self.page.add(ft.Row([input_box, send_button, send_file_button]))
             self.page.update()
 
         try:
@@ -153,12 +165,12 @@ class DecentralizedClient:
             await websocket.close()
 
     def handle_message(self, message):
-        if message.startswith("[photo](") or message.startswith("[document]("):
-            file_type, file_path = self.parse_file_message(message)
-            local_path = self.download_file(file_path)
-            print(f"Получено {file_type}: {local_path}")
-        else:
-            print(f"Партнер: {message}")
+            if message.startswith("[File]("):
+                file_path = message[7:-1]
+                local_path = self.download_file(file_path)
+                print(f"Получено файл: {local_path}")
+            else:
+                print(f"Партнер: {message}")
 
     def parse_file_message(self, message):
         file_type = "photo" if message.startswith("[photo]") else "document"
