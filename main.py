@@ -19,7 +19,7 @@ def generate_client_id():
 async def main(page=None):
     log.info("Запуск программы")
     client_id = generate_client_id()
-    log.info(f"Сгенерирован client_id: {client_id}")
+    log.info(f"Сгенерирован client_id: {client_id}") 
     db = Database(f"{client_id}.db")
 
     client = DecentralizedClient(client_id, db, page)
