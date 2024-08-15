@@ -44,26 +44,17 @@ def generate_self_signed_cert(client_id):
         critical=False,
     ).sign(key, hashes.SHA256(), default_backend())
 
-    keyfile = f"{client_id}_key.pem"
-    certfile = f"{client_id}_cert.pem"
-    
-    if os.path.exists("known_users.json"):
-        with open("known_users.json", "r") as f:
-            known_users = json.load(f)
-            if keyfile in known_users or certfile in known_users:
-                return
-    with open("known_users.json", "a") as f:
-        json.dump([keyfile, certfile], f)
-        f.write("\n")
-
-    with open(keyfile, "wb") as f:
+    with open(f"certs/{client_id}_key.pem", "wb") as f:
         f.write(key.private_bytes(
             encoding=Encoding.PEM,
             format=PrivateFormat.TraditionalOpenSSL,
             encryption_algorithm=NoEncryption()
         ))
 
-    with open(certfile, "wb") as f:
+    with open(f"certs/{client_id}_cert.pem", "wb") as f:
         f.write(cert.public_bytes(Encoding.PEM))
 
+    certfile = f"certs/{client_id}_cert.pem"
+    keyfile = f"certs/{client_id}_key.pem"
+    
     return certfile, keyfile

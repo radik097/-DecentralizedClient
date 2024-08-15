@@ -1,5 +1,4 @@
-
-import asyncio
+# client_module.py
 import ssl
 import logging
 import websockets
@@ -39,11 +38,13 @@ class DecentralizedClient:
                     self.connected = True
                     self.websocket = websocket
                     break
+            except ConnectionRefusedError:
+                log.info(f"Не удалось подключиться к {address}")
             except Exception as e:
                 log.error(f"Ошибка подключения к {address}: {e} ")
                 console.print_exception(show_locals=True)
         log.info("Запуск сервера для обработки соединений.")
-        await Server(host="0.0.0.0", port=8000, certfile=self.certfile, keyfile=self.keyfile).start_server()
+        await Server(host="0.0.0.0", port=8080, certfile=self.certfile, keyfile=self.keyfile).start_server()
     async def send_message(self, message, file_path=None):
         if not self.websocket or self.websocket.closed:
             log.error("Соединение не установлено или закрыто.")
@@ -96,6 +97,8 @@ class DecentralizedClient:
                     self.handle_message(message)
                     if self.page:
                         self.page.update()
+        except ConnectionRefusedError:
+            pass
         except websockets.ConnectionClosed:
             log.info("Соединение закрыто.")
         except Exception as e:

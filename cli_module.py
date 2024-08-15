@@ -1,6 +1,6 @@
 
 import argparse
-from client_module import Client
+from client_module import DecentralizedClient
 
 def main():
     parser = argparse.ArgumentParser(description="Decentralized Client CLI")
@@ -9,7 +9,7 @@ def main():
     
     args = parser.parse_args()
     
-    client = Client('localhost', ['192.168.178.10:8080'])
+    client = DecentralizedClient(['192.168.178.10:8080'])
     client.connect()
     
     if args.send:

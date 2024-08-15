@@ -39,30 +39,16 @@ def save_known_users(known_users):
         json.dump(known_users, f)
 
 def generate_client_id():
-    """Генерация или загрузка уникального client_id."""
-    known_users = load_known_users()
-
-    # Проверка на наличие существующего client_id и его ключей
-    for file in os.listdir():
-        if file.endswith("_key.pem") and file.split("_")[0] in known_users:
-            return file.split("_")[0]
-
-    # Генерация нового client_id
+    """Генерация нового уникального client_id без проверки и сохранения."""
     client_id = str(random.randint(100000, 999999))
-    while client_id in known_users:
-        client_id = str(random.randint(100000, 999999))
-    
-    # Сохранение нового client_id
-    known_users.append(client_id)
-    save_known_users(known_users)
-
     return client_id
+
 
 async def main(page=None):
     log.info("Запуск программы")
     client_id = generate_client_id()
     log.info(f"Используется client_id: {client_id}")
-    db = Database(f"{client_id}.db")
+    db = Database(f"db/{client_id}.db")
 
     client = DecentralizedClient(client_id, known_clients, page)
 
@@ -103,12 +89,12 @@ def send_file(data, client):
                 asyncio.create_task(client.send_message(f"[File]({file_path})"))
 
 if __name__ == "__main__":
-    if platform.system() in ["Linux", "Darwin"]:
-        asyncio.run(main())
-    else:
+    if platform.system() == "Windows":
         try:
             ft.app(target=main)
         except Exception as e:
             log.error(f"Ошибка запуска GUI режима, переключаемся на CLI режим: {e}")
             console.print_exception()
             asyncio.run(main())
+    else:
+        asyncio.run(main())
