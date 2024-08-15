@@ -98,7 +98,7 @@ SecureChat/
   
 ## Лицензия
 
-Этот проект распространяется под лицензией MIT. Подробности смотрите в файле LICENSE.
+Подробности смотрите в файле [LICENSE](https://github.com/radik097/-DecentralizedClient/blob/main/LICENSE).
 
 ---
 
