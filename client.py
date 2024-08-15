@@ -107,82 +107,66 @@ class DecentralizedClient:
             self.page.add(self.message_list)
             self.page.update()
 
-            async def send_message(e):
-                message = input_box.value
-                if message.lower() == '/quit':
-                    log.info("Чат завершен.")
-                    await websocket.close()
-                    return
-                await websocket.send(message)
-                log.info("Сообщение отправлено.")
-                self.message_list.controls.append(ft.Text(f"Вы: {message}"))
-                self.page.update()
-                input_box.value = ""
-
-            async def send_file(e):
-                file_picker = ft.FilePicker(on_result=lambda e: send_file_result(e.data))
-                self.page.add(file_picker)
-                self.page.update()
-
-            async def send_file_result(file_path):
-                await websocket.send(f"[File]({file_path})")
-                log.info("Файл отправлен.")
-                self.message_list.controls.append(ft.Text(f"Вы: Файл отправлен"))
-                self.page.update()
-
             input_box = ft.TextField(hint_text="Введите сообщение", expand=True)
-            send_button = ft.ElevatedButton("Отправить", on_click=send_message)
-            send_file_button = ft.ElevatedButton("Отправить файл", on_click=send_file)
+            send_button = ft.ElevatedButton("Отправить", on_click=lambda e: asyncio.create_task(self.send_message(input_box.value)))
+            send_file_button = ft.ElevatedButton("Отправить файл", on_click=lambda e: asyncio.create_task(self.send_file()))
 
             self.page.add(ft.Row([input_box, send_button, send_file_button]))
             self.page.update()
 
-        try:
             while True:
-                if self.page:
-                    await asyncio.sleep(0.1)
-                else:
+                await asyncio.sleep(0.1)  # Ожидание в GUI
+
+        else:
+            try:
+                while True:
                     message = input("Вы: ")
                     if message.lower() == '/quit':
                         log.info("Чат завершен.")
                         break
                     await websocket.send(message)
                     log.info("Сообщение отправлено.")
-                
-                response = await websocket.recv()
-                log.info(f"Получено сообщение: {response}") 
-                if self.page:
-                    self.message_list.controls.append(ft.Text(f"Партнер: {response}"))
-                    self.page.update()
-                else:
+                    
+                    response = await websocket.recv()
+                    log.info(f"Получено сообщение: {response}")
+                    
                     self.handle_message(response)
-
-        except websockets.exceptions.ConnectionClosedError:
-            log.info("Соединение было закрыто.")
-        except Exception as e:
-            log.error(f"Ошибка в чате: {e}", exc_info=True)
-        finally:
-            await websocket.close()
+            except websockets.exceptions.ConnectionClosedError:
+                log.info("Соединение было закрыто.")
+            except Exception as e:
+                log.error(f"Ошибка в чате: {e}", exc_info=True)
+            finally:
+                await websocket.close()
 
     def handle_message(self, message):
-            if message.startswith("[File]("):
-                file_path = message[7:-1]
-                local_path = self.download_file(file_path)
-                print(f"Получено файл: {local_path}")
-            else:
-                print(f"Партнер: {message}")
-
-    def parse_file_message(self, message):
-        file_type = "photo" if message.startswith("[photo]") else "document"
-        file_path = message[message.index("(") + 1: message.index(")")]
-        return file_type, file_path
+        if message.startswith("[File]("):
+            file_path = message[7:-1]
+            local_path = self.download_file(file_path)
+            print(f"Получено файл: {local_path}")
+        else:
+            print(f"Партнер: {message}")
 
     def download_file(self, file_url):
-        response = requests.get(file_url)
-        file_name = os.path.join(gettempdir(), os.path.basename(file_url))
-        with open(file_name, 'wb') as f:
-            f.write(response.content)
-        return file_name
+        try:
+            if file_url.startswith('http'):
+                response = requests.get(file_url)
+                file_name = os.path.join(gettempdir(), os.path.basename(file_url))
+                with open(file_name, 'wb') as f:
+                    f.write(response.content)
+                return file_name
+            else:
+                return file_url
+        except Exception as e:
+            log.error(f"Ошибка загрузки файла: {e}")
+            return None
 
-    async def send_message(self, message):
+    async def send_message(self, message, file_path=None):
+        if file_path:
+            message = f"[File]({file_path})"
         await self.websocket.send(message)
+        log.info(f"Сообщение отправлено: {message}")
+
+    async def send_file(self):
+        file_picker = ft.FilePicker(on_result=lambda e: asyncio.create_task(self.send_message(f"[File]({e.data})")))
+        self.page.add(file_picker)
+        file_picker.pick_files(file_type=FilePickerFileType.IMAGE)
