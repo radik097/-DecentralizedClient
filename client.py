@@ -5,7 +5,10 @@ import websockets
 from websockets import serve, ConnectionClosedError, exceptions
 from security import generate_self_signed_cert
 import flet as ft
-  
+import os
+import requests
+from tempfile import gettempdir
+
 log = logging.getLogger("rich")
 
 class DecentralizedClient:
@@ -140,7 +143,7 @@ class DecentralizedClient:
                     self.message_list.controls.append(ft.Text(f"Партнер: {response}"))
                     self.page.update()
                 else:
-                    print(f"Партнер: {response}")
+                    self.handle_message(response)
 
         except websockets.exceptions.ConnectionClosedError:
             log.info("Соединение было закрыто.")
@@ -148,3 +151,26 @@ class DecentralizedClient:
             log.error(f"Ошибка в чате: {e}", exc_info=True)
         finally:
             await websocket.close()
+
+    def handle_message(self, message):
+        if message.startswith("[photo](") or message.startswith("[document]("):
+            file_type, file_path = self.parse_file_message(message)
+            local_path = self.download_file(file_path)
+            print(f"Получено {file_type}: {local_path}")
+        else:
+            print(f"Партнер: {message}")
+
+    def parse_file_message(self, message):
+        file_type = "photo" if message.startswith("[photo]") else "document"
+        file_path = message[message.index("(") + 1: message.index(")")]
+        return file_type, file_path
+
+    def download_file(self, file_url):
+        response = requests.get(file_url)
+        file_name = os.path.join(gettempdir(), os.path.basename(file_url))
+        with open(file_name, 'wb') as f:
+            f.write(response.content)
+        return file_name
+
+    async def send_message(self, message):
+        await self.websocket.send(message)
