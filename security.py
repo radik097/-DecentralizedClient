@@ -6,6 +6,12 @@ from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat
 from cryptography.hazmat.backends import default_backend
 from datetime import datetime, timedelta
 import pytz
+from rich.console import Console
+from rich.traceback import install
+import os, json
+install()
+console=Console()
+
   
 def generate_self_signed_cert(client_id):
     key = rsa.generate_private_key(
@@ -40,6 +46,15 @@ def generate_self_signed_cert(client_id):
 
     keyfile = f"{client_id}_key.pem"
     certfile = f"{client_id}_cert.pem"
+    
+    if os.path.exists("known_users.json"):
+        with open("known_users.json", "r") as f:
+            known_users = json.load(f)
+            if keyfile in known_users or certfile in known_users:
+                return
+    with open("known_users.json", "a") as f:
+        json.dump([keyfile, certfile], f)
+        f.write("\n")
 
     with open(keyfile, "wb") as f:
         f.write(key.private_bytes(
