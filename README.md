@@ -98,7 +98,7 @@ SecureChat/
   
 ## Лицензия
 
-Подробности смотрите в файле [LICENSE](https://github.com/radik097/-DecentralizedClient/blob/main/LICENSE).
+Подробности смотрите в файле [LICENSE](https://creativecommons.org/licenses/by-nc/4.0/).
 
 ---
 
