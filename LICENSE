@@ -274,4 +274,61 @@ version(s), and exceptions or additional permissions here}."
   file in a relevant directory) where a recipient would be likely to
   look for such a notice.
 
-  You may add additional accurate notices of copyright ownership.
+  Eclipse Public License - v 2.0 with Non-Commercial Use Restriction
+
+    THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS ECLIPSE
+    PUBLIC LICENSE ("AGREEMENT") WITH AN ADDITIONAL NON-COMMERCIAL USE
+    RESTRICTION. ANY USE, REPRODUCTION OR DISTRIBUTION OF THE PROGRAM
+    CONSTITUTES RECIPIENT'S ACCEPTANCE OF THIS AGREEMENT.
+
+"This software is licensed under the Eclipse Public License - v 2.0 with additional restrictions. 
+This software may not be used for Commercial Use without prior written permission from the original 
+author or rights holder. By using this software, you agree to the terms of the Eclipse Public License - v 2.0 
+and acknowledge the Non-Commercial Use restriction."
+
+1. DEFINITIONS
+
+The original definitions from the Eclipse Public License - v 2.0 apply. In addition, the following definitions are added:
+
+"Non-Commercial Use" means any use of the Program that is not intended to generate revenue or financial gain, either directly or indirectly. 
+This includes, but is not limited to, personal, educational, research, and non-profit uses.
+
+"Commercial Use" means any use of the Program that is intended to generate revenue, financial gain, or any other commercial advantage, 
+either directly or indirectly.
+
+2. GRANT OF RIGHTS
+
+In addition to the original grants of rights:
+
+  f) **Non-Commercial Use Only**: The Program is provided under this Agreement for Non-Commercial Use only. 
+  Any Commercial Use of the Program is strictly prohibited unless explicit written permission is granted by the original author or rights holder.
+
+3. REQUIREMENTS
+
+In addition to the original requirements:
+
+  c) **Acknowledgment of License**: By using, reproducing, or distributing the Program, Recipient automatically acknowledges and agrees 
+  to all the terms and conditions of this Agreement, including the Non-Commercial Use restriction.
+
+4. COMMERCIAL DISTRIBUTION
+
+This section is modified to explicitly state:
+
+  a) **Prohibition on Commercial Distribution**: Commercial distribution of the Program is prohibited under this Agreement. 
+  Any Contributor or Recipient who wishes to engage in Commercial Use must obtain explicit written permission from the original author or rights holder.
+
+5. NO WARRANTY
+
+The original disclaimer of warranties applies.
+
+6. DISCLAIMER OF LIABILITY
+
+The original disclaimer of liability applies.
+
+7. GENERAL
+
+In addition to the original general terms:
+
+  g) **Acknowledgment and Acceptance**: By using, reproducing, or distributing the Program, the Recipient acknowledges and agrees 
+  that this Agreement is valid and binding. The Recipient further acknowledges that they have read and understood the terms of this Agreement.
+
